@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_project/models/user.dart';
 import 'package:my_project/providers/user_provider.dart';
 import 'package:my_project/resources/auth_methods.dart';
 import 'package:my_project/screens/add_post_screen.dart';
@@ -32,11 +31,9 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // model.User user = User(email: 'devanshi@gmail.com', uid: '123', bio: 'haha', username: 'devanshi');
-    model.User user = Provider.of<UserProvider>(context).getUser;
+    model.User? user = Provider.of<UserProvider>(context).getUser;
 
-
-    return Scaffold(
+  return Scaffold(
       appBar: AppBar(
         title: Text('Welcome to My Project'),
         actions: [
@@ -69,7 +66,7 @@ class _FeedScreenState extends State<FeedScreen> {
           )
         ],
       ),
-      body: Center(child: Text(user.username)),
+      body: Center(child: Text('username')),
     );
     //   isLoading
     // ? Center(

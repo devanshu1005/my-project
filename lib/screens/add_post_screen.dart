@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_project/providers/user_provider.dart';
 import 'package:my_project/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -13,6 +15,16 @@ class AddPostScreen extends StatefulWidget {
 class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController descriptionController = TextEditingController();
   Uint8List? file;
+  bool isLoading = false;
+
+  // void uploadImage(
+  //   String uid,
+  //   String username,
+  // ) async {
+  //   try{
+
+  //   }
+  // }
 
   _selectImage(BuildContext parentContext) async {
     return showDialog(
@@ -25,8 +37,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
               padding: const EdgeInsets.all(20),
               child: const Text('Take a photo'),
               onPressed: () async {
-                // Navigator.pop(context);
-                // Uint8List pickedFile = await pickImage(ImageSource.camera);
+                Navigator.pop(context);
+                Uint8List pickedFile = await pickImage(ImageSource.camera);
                 // imageUrl =
                 //     await uploadImageToStorage('posts', pickedFile, true);
                 // setState(() {
@@ -38,8 +50,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
               padding: const EdgeInsets.all(20),
               child: const Text('Choose from Gallery'),
               onPressed: () async {
-                // Navigator.of(context).pop();
-                // Uint8List pickedFile = await pickImage(ImageSource.gallery);
+                Navigator.of(context).pop();
+                Uint8List pickedFile = await pickImage(ImageSource.gallery);
                 // imageUrl =
                 //     // await uploadImageToStorage('posts', pickedFile, true);
 
@@ -62,6 +74,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    final UserProvider userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
             appBar: AppBar(
               title: Text('Upload Image'),
@@ -78,7 +91,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
             body: file == null
                 ? Center(
                     child: IconButton(
-                      onPressed: () {}, // Use 'context' here
+                      onPressed: () =>
+                      _selectImage(context), // Use 'context' here
                       icon: Icon(Icons.upload),
                     ),
                   )

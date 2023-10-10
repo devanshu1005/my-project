@@ -5,7 +5,7 @@ import 'package:my_project/resources/auth_methods.dart';
 class UserProvider with ChangeNotifier{
   User? user;
   final AuthMethods _authMethods = AuthMethods();
-  User get getUser => user!;
+  User? get getUser => user;
 
   Future<void> refreshUser() async {
     User user = await _authMethods.getUserDetails();
