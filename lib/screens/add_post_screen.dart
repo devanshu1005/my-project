@@ -39,8 +39,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
               onPressed: () async {
                 Navigator.pop(context);
                 Uint8List pickedFile = await pickImage(ImageSource.camera);
-                // imageUrl =
-                //     await uploadImageToStorage('posts', pickedFile, true);
                 // setState(() {
                 //   file = pickedFile;
                 // });
@@ -52,9 +50,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 Uint8List pickedFile = await pickImage(ImageSource.gallery);
-                // imageUrl =
-                //     // await uploadImageToStorage('posts', pickedFile, true);
-
                 // setState(() {
                 //   file = pickedFile;
                 // });
