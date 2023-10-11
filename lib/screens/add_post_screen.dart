@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_project/providers/user_provider.dart';
+import 'package:my_project/resources/firestore_methods.dart';
 import 'package:my_project/utils/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -17,14 +20,27 @@ class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? file;
   bool isLoading = false;
 
-  // void uploadImage(
-  //   String uid,
-  //   String username,
-  // ) async {
-  //   try{
-
-  //   }
-  // }
+  void uploadImage(
+    String uid,
+    String username,
+  ) async {
+    try{
+     String res = await FirestoreMethods().uploadPost(
+      descriptionController.text, 
+      file!, 
+      uid, 
+      username,
+      );
+      
+      if(res=="success"){
+        showSnackBar('posted', context);
+      }else {
+        showSnackBar(res, context);
+      }
+    }catch (e){
+      showSnackBar(e.toString(), context);
+    }
+  }
 
   _selectImage(BuildContext parentContext) async {
     return showDialog(
@@ -39,9 +55,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
               onPressed: () async {
                 Navigator.pop(context);
                 Uint8List pickedFile = await pickImage(ImageSource.camera);
-                // setState(() {
-                //   file = pickedFile;
-                // });
+                setState(() {
+                  file = pickedFile;
+                });
               },
             ),
             SimpleDialogOption(
@@ -50,9 +66,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 Uint8List pickedFile = await pickImage(ImageSource.gallery);
-                // setState(() {
-                //   file = pickedFile;
-                // });
+                setState(() {
+                  file = pickedFile;
+                });
               },
             ),
             SimpleDialogOption(
@@ -70,15 +86,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   Widget build(BuildContext context) {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
+    
     return Scaffold(
             appBar: AppBar(
               title: Text('Upload Image'),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    // uploadPost(descriptionController.text, file!,
-                    //     nameController.text, imageUrl);
-                  },
+                  onPressed: ()=> uploadImage(userProvider.userdata!.uid, userProvider.userdata!.username),
                   child: const Text('Post'),
                 ),
               ],

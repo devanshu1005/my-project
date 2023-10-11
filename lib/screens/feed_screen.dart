@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_project/models/user.dart';
 import 'package:my_project/providers/user_provider.dart';
 import 'package:my_project/resources/auth_methods.dart';
 import 'package:my_project/screens/add_post_screen.dart';
@@ -26,12 +27,13 @@ class _FeedScreenState extends State<FeedScreen> {
   addData() async {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
-    await userProvider.refreshUser();
+  
   }
 
   @override
   Widget build(BuildContext context) {
-    model.User? user = Provider.of<UserProvider>(context).getUser;
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+
 
   return Scaffold(
       appBar: AppBar(
@@ -66,7 +68,7 @@ class _FeedScreenState extends State<FeedScreen> {
           )
         ],
       ),
-      body: Center(child: Text('username')),
+      body: Center(child: Text(userProvider.userdata!.username)),
     );
     //   isLoading
     // ? Center(

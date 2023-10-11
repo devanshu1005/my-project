@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class UserData {
   final String email;
   final String username;
   final String bio;
   final String uid;
 
-  const User({
+  const UserData({
     required this.email,
     required this.uid,
     required this.bio,
@@ -20,10 +20,10 @@ class User {
     "bio": bio,
   };
 
-  static User fromSnap(DocumentSnapshot snap){
+  static UserData fromSnap(DocumentSnapshot snap){
     var snapshot = snap.data() as Map<String, dynamic>;
 
-    return User(
+    return UserData(
       email: snapshot['email']??'',
       username: snapshot['username']??'',
       uid:  snapshot['uid']??'',

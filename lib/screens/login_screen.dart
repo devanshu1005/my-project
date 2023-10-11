@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:my_project/models/user.dart';
+import 'package:my_project/providers/user_provider.dart';
 import 'package:my_project/resources/auth_methods.dart';
 import 'package:my_project/screens/feed_screen.dart';
 import 'package:my_project/screens/signup_screen.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,6 +18,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> loginUser() async {
     String res = await AuthMethods().loginUser(
@@ -22,7 +29,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (res == "success") {
       // Navigate to FeedScreen when login is successful
-      
+      User currentUser = _auth.currentUser!;
+
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(currentUser.uid).get();
+      UserData.fromSnap(snap);
+
+     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.userdata = UserData.fromSnap(snap);
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const FeedScreen()),
@@ -32,6 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // You can show an error message or take appropriate action here
     }
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -82,7 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Navigate to SignupScreen when "Sign up" is tapped
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SignupScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const SignupScreen()),
                     );
                   },
                   child: Container(
