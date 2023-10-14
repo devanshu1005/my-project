@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/providers/user_provider.dart';
@@ -10,44 +8,76 @@ import 'package:provider/provider.dart';
 
 class CommentScreen extends StatefulWidget {
   final String postId;
-  final List<Comment> lstComments;
+
   const CommentScreen({
     Key? key,
-    required this.lstComments,
     required this.postId,
   }) : super(key: key);
+
   @override
   State<CommentScreen> createState() => _CommentScreenState();
 }
 
 class _CommentScreenState extends State<CommentScreen> {
- final TextEditingController _comController = TextEditingController();
+  final TextEditingController _comController = TextEditingController();
+  List<Comment> comments = [];
+  bool isLoading = false;
+
+  Future<List<Comment>> fetchCommentsForPost(String postId) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      DocumentSnapshot<Map<String, dynamic>> postSnapshot =
+          await FirebaseFirestore.instance
+              .collection('posts')
+              .doc(postId)
+              .get();
+      if (postSnapshot.exists) {
+        List<dynamic> commentsData = postSnapshot.data()!['comments'];
+
+        if (commentsData != null) {
+          for (var commentData in commentsData) {
+            comments.add(Comment.fromSnap(commentData));
+          }
+        }
+      }
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error fetching comments: $e");
+    }
+
+    return comments;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    fetchCommentsForPost(widget.postId);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('comments'),
+        title: Text('Comments'),
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(), 
-        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic >>> snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) => CommentCard(
-              comment: Comment.fromSnap(snapshot.data!.docs[index].data()),
+      body: isLoading
+          ? CircularProgressIndicator()
+          : ListView.builder(
+              itemCount: comments.length,
+              itemBuilder: (context, index) => CommentCard(
+                comment: comments[index],
+              ),
             ),
-          
-          );
-        },
-        ),
       bottomNavigationBar: SafeArea(
         child: Row(
           children: [
@@ -55,22 +85,25 @@ class _CommentScreenState extends State<CommentScreen> {
               child: TextField(
                 controller: _comController,
                 decoration: const InputDecoration(
-                  hintText: '    comment here',
+                  hintText: 'Comment here',
                 ),
               ),
             ),
-           IconButton(
-  onPressed: () async {
-    final userProvider = UserProvider();
-    if (userProvider.userdata != null) {
-      final userId = userProvider.userdata!.uid;
-      await FirestoreMethods().addCommentToPost(widget.postId, userId, _comController.text);
-    } else {
-      print('userdata is null');
-    }
-  }, icon: const Icon(Icons.send))
+            IconButton(
+              onPressed: () async {
+                if (userProvider.userdata != null) {
+                  final userId = userProvider.userdata!.uid;
+                  await FirestoreMethods().addCommentToPost(
+                      widget.postId, userId, _comController.text);
+                } else {
+                  print('User data is null');
+                }
+              },
+              icon: Icon(Icons.send),
+            )
           ],
-        )),
-        );
+        ),
+      ),
+    );
   }
 }
