@@ -35,56 +35,56 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 hintText: 'Enter your email',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextField(
               controller: _passController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your password',
               ),
               obscureText: true, // Hide password text
             ),
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             TextField(
               controller: _bioController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'bio',
                 hintText: 'Enter your email',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'username',
                 hintText: 'Enter your username',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: signUpUser,
-              child: Text('Sign Up'),
+              child: const Text('Sign Up'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  child: Text("Dont have an accout?"),
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
+                  child: const Text("Dont have an accout?"),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -93,14 +93,14 @@ class _SignupScreenState extends State<SignupScreen> {
                     }));
                   },
                   child: Container(
-                    child: Text(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                    ),
+                    child: const Text(
                       "Log in",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
                     ),
                   ),
                 )

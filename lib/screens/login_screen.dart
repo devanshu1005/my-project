@@ -64,34 +64,34 @@ class _LoginScreenState extends State<LoginScreen> {
           children: <Widget>[
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 hintText: 'Enter your email',
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             TextField(
               controller: _passController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter your password',
               ),
               obscureText: true, // Hide password text
             ),
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: loginUser,
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  child: Text("Don't have an account?"),
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
+                  child: const Text("Don't have an account?"),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -103,14 +103,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                   child: Container(
-                    child: Text(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8,
+                    ),
+                    child: const Text(
                       "Sign up.",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
                     ),
                   ),
                 )

@@ -20,7 +20,7 @@ class UserData {
     "bio": bio,
   };
 
-  static UserData fromSnap(DocumentSnapshot snap){
+  static  fromSnap(DocumentSnapshot snap){
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return UserData(

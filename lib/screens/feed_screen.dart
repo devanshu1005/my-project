@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:my_project/models/user.dart';
+import 'package:my_project/models/post.dart';
 import 'package:my_project/providers/user_provider.dart';
 import 'package:my_project/resources/auth_methods.dart';
 import 'package:my_project/screens/add_post_screen.dart';
 import 'package:my_project/screens/login_screen.dart';
+import 'package:my_project/widgets/post_card.dart';
 import 'package:provider/provider.dart';
-import 'package:my_project/models/user.dart' as model;
 
 class FeedScreen extends StatefulWidget {
   const FeedScreen({super.key});
@@ -37,7 +36,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome to My Project'),
+        title: const Text('Welcome to My Project'),
         actions: [
           IconButton(
               onPressed: () async {
@@ -52,7 +51,7 @@ class _FeedScreenState extends State<FeedScreen> {
                   );
                 }
               },
-              icon: Icon(Icons.logout)),
+              icon: const Icon(Icons.logout)),
           IconButton(
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -64,21 +63,35 @@ class _FeedScreenState extends State<FeedScreen> {
               //   }
               // });
             },
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
           )
         ],
       ),
-      body: Center(child: Text(userProvider.userdata!.username)),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('posts').snapshots(), 
+        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic >>> snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) => PostCard(
+              post: Post.fromSnap(snapshot.data!.docs[index]),
+            ),
+          
+          );
+        },
+        ),
     );
-    //   isLoading
-    // ? Center(
-    //     child: CircularProgressIndicator(),
-    //   )
-    // : ListView.builder(
-    //     itemCount: listOfPosts.length,
-    //     itemBuilder: (context, index) => PostCard(
-    //       snap: listOfPosts[index].data(),
-    //     ),
-    //   ),
+    
   }
 }
+
+
+
+
+
+   
