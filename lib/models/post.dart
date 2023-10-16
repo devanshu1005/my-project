@@ -20,7 +20,7 @@ class Post {
     required this.lstComments,
   });
 
-  static Post fromSnap(DocumentSnapshot snap) {
+  static Post fromSnap(DocumentSnapshot  snap) {
     var data = snap.data() as Map<String, dynamic>;
     
     List<Comment> comments = [];

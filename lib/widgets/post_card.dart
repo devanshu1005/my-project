@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_project/models/post.dart';
 import 'package:my_project/resources/firestore_methods.dart';
 import 'package:my_project/screens/comment_screen.dart';
+import 'package:my_project/screens/profile_screen.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -38,9 +39,16 @@ class _PostCardState extends State<PostCard> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.post.username,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return const ProfileScreen();
+              }));
+                          },
+                          child: Text(widget.post.username,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         )
                       ],

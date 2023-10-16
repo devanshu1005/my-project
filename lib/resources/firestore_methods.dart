@@ -58,14 +58,17 @@ class FirestoreMethods{
     }
   }
 
-  Future<void> addCommentToPost(String postId, String uid, String comment) async {
+  Future<void> addCommentToPost(String postId, String uid, String comment, String username) async {
   try {
+    String commentId = const Uuid().v1();
     if (comment.isNotEmpty) {
       // Use the update method to add a comment to the "comments" field as an array.
       await _firestore.collection('posts').doc(postId).update({
         'comments': FieldValue.arrayUnion([{
           'text': comment,
           'uid': uid,
+          'username': username,
+          "commentId": commentId,
         }]),
       });
     } else {

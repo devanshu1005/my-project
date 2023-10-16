@@ -93,8 +93,9 @@ class _CommentScreenState extends State<CommentScreen> {
               onPressed: () async {
                 if (userProvider.userdata != null) {
                   final userId = userProvider.userdata!.uid;
+                  final username = userProvider.userdata!.username;
                   await FirestoreMethods().addCommentToPost(
-                      widget.postId, userId, _comController.text);
+                      widget.postId, userId, _comController.text, username);
                 } else {
                   print('User data is null');
                 }
