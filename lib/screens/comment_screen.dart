@@ -74,7 +74,7 @@ class _CommentScreenState extends State<CommentScreen> {
           ? CircularProgressIndicator()
           : ListView.builder(
               itemCount: comments.length,
-              itemBuilder: (context, index) => CommentCard(
+              itemBuilder: (context, index) => CommentCard(postId: widget.postId,
                 comment: comments[index],
               ),
             ),

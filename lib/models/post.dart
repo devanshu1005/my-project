@@ -26,7 +26,7 @@ class Post {
     List<Comment> comments = [];
     if (data["comments"] != null) {
       for (var commentData in data["comments"] as List<dynamic>) {
-        Comment comment = Comment.fromSnap(commentData as Map<String, dynamic>);
+        Comment comment = Comment.fromSnap(commentData );
         comments.add(comment);
       }
     }

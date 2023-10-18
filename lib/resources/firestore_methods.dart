@@ -58,7 +58,8 @@ class FirestoreMethods{
     }
   }
 
-  Future<void> addCommentToPost(String postId, String uid, String comment, String username) async {
+  // Update the 'addCommentToPost' method
+Future<void> addCommentToPost(String postId, String uid, String comment, String username) async {
   try {
     String commentId = const Uuid().v1();
     if (comment.isNotEmpty) {
@@ -69,6 +70,7 @@ class FirestoreMethods{
           'uid': uid,
           'username': username,
           "commentId": commentId,
+          'replies': [], // Initialize replies as an empty list
         }]),
       });
     } else {
@@ -78,5 +80,28 @@ class FirestoreMethods{
     print(e.toString());
   }
 }
+
+// Update the 'addReplyToComment' method
+Future<void> addReplyToComment(String postId, String commentId, String reply, String username) async {
+  try {
+    if (reply.isNotEmpty) {
+      // Use the update method to add a reply to a comment's "replies" field as an array.
+      await _firestore.collection('posts').doc(postId).update({
+        'comments': FieldValue.arrayUnion([{
+          'commentId': commentId,
+          'replies': FieldValue.arrayUnion([{
+            'text': reply,
+            'username': username,
+          }]),
+        }]),
+      });
+    } else {
+      print('Reply is empty');
+    }
+  } catch (e) {
+    print(e.toString());
+  }
+}
+
 
 }
