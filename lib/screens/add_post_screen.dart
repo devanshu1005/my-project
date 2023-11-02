@@ -111,9 +111,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
       appBar: AppBar(
         title: const Text('Upload Image'),
         actions: [
-          TextButton(
-            onPressed: () => uploadImage(userProvider.userdata!.uid, userProvider.userdata!.username),
-            child: const Text('Post'),
+          Container(
+            color: Colors.white,
+            child: TextButton(
+              onPressed: () => uploadImage(userProvider.userdata!.uid, userProvider.userdata!.username),
+              child: const Text('Post'),
+            
+            ),
           ),
         ],
       ),

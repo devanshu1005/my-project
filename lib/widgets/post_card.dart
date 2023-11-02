@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/models/post.dart';
 import 'package:my_project/resources/firestore_methods.dart';
@@ -17,6 +18,13 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isliked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isliked =
+        widget.post.lstLikes.contains(FirebaseAuth.instance.currentUser!.uid);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +49,13 @@ class _PostCardState extends State<PostCard> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ProfileScreen();
-              }));
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const ProfileScreen();
+                            }));
                           },
-                          child: Text(widget.post.username,
+                          child: Text(
+                            widget.post.username,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
@@ -87,43 +97,47 @@ class _PostCardState extends State<PostCard> {
 
           //image section
           SizedBox(
-            height: MediaQuery.of(context).size.height*0.35,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: double.infinity,
-           child:Image.network(
+            child: Image.network(
               widget.post.postUrl,
               fit: BoxFit.cover,
             ),
-
           ),
 
           //like comment section
           Row(
             children: [
               IconButton(
-          onPressed: () async {
-            // Call the likePost function when the 'like' button is pressed
-            await FirestoreMethods().likePost(
-              widget.post.postId,
-              FirebaseAuth.instance.currentUser!.uid,
-              widget.post.lstLikes,
-            );
+                onPressed: () async {
+                  // Call the likePost function when the 'like' button is pressed
+                  if (isliked == false) {
+                    await FirestoreMethods().likePost(
+                      widget.post.postId,
+                      widget.post.uid,
+                    );
+                  } else {
+                    await FirestoreMethods()
+                        .dislikePost(widget.post.postId, widget.post.uid);
+                  }
 
-            setState(() {
-              isliked = !isliked; 
-            });
-          },
-          icon: Icon(
-            isliked ? Icons.favorite : Icons.favorite_border,
-            color: isliked ? Colors.red : Colors.black,
-          ),
-        ),
+                  setState(() {
+                    isliked = !isliked;
+                  });
+                },
+                icon: Icon(
+                  isliked ? Icons.favorite : Icons.favorite_border,
+                  color: isliked ? Colors.red : Colors.black,
+                ),
+              ),
               IconButton(
                 onPressed: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return CommentScreen( postId: widget.post.postId,);
-              }));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return CommentScreen(
+                      postId: widget.post.postId,
+                    );
+                  }));
                 },
-                
                 icon: const Icon(
                   Icons.comment_outlined,
                 ),
@@ -152,9 +166,7 @@ class _PostCardState extends State<PostCard> {
               children: [
                 Text(
                   '${widget.post.lstLikes.length}likes',
-                   style: const TextStyle(
-                    fontWeight: FontWeight.bold
-                   ),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 )
               ],
             ),

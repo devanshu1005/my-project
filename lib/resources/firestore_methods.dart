@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:my_project/models/post.dart';
 import 'package:my_project/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
+
 
 class FirestoreMethods{
   final FirebaseFirestore _firestore=FirebaseFirestore.instance;
@@ -41,45 +44,84 @@ class FirestoreMethods{
   }
 
   //liking the post
-  Future<void> likePost(String postId, String uid, List likes)async{
-    try{
-      if(likes.contains(uid)){
-        await _firestore.collection('posts').doc(postId).update({
-          'likes':FieldValue.arrayRemove([uid]),
-        });
-      }else{
-         await _firestore.collection('posts').doc(postId).update({
-          'likes':FieldValue.arrayUnion([uid]),
-        });
-      }
 
-    }catch(e){
-      print(e.toString(),);
-    }
-  }
-
-  // Update the 'addCommentToPost' method
-Future<void> addCommentToPost(String postId, String uid, String comment, String username) async {
+Future<void> likePost(String postId, String uid) async {
   try {
-    String commentId = const Uuid().v1();
-    if (comment.isNotEmpty) {
-      // Use the update method to add a comment to the "comments" field as an array.
-      await _firestore.collection('posts').doc(postId).update({
-        'comments': FieldValue.arrayUnion([{
-          'text': comment,
-          'uid': uid,
-          'username': username,
-          "commentId": commentId,
-          'replies': [], // Initialize replies as an empty list
-        }]),
-      });
+    final HttpsCallable likeCallable = FirebaseFunctions.instance.httpsCallable('likePost');
+
+    final result = await likeCallable.call({
+      'postId': postId,
+      'uid': uid,
+    });
+
+    final data = result.data;
+
+    if (data['result'] == 'success') {
+      // Like operation was successful
+      print('Like successful');
     } else {
-      print('Comment is empty');
+      // Handle the error
+      print('Error: ${data['message']}');
     }
   } catch (e) {
-    print(e.toString());
+    // Handle any exceptions that may occur during the function call
+    print('Error: $e');
   }
 }
+
+Future<void> dislikePost(String postId, String uid) async {
+  try {
+    final HttpsCallable dislikeCallable = FirebaseFunctions.instance.httpsCallable('dislikePost');
+
+    final result = await dislikeCallable.call({
+      'postId': postId,
+      'uid': uid,
+    });
+
+    final data = result.data;
+
+    if (data['result'] == 'success') {
+      // Dislike operation was successful
+      print('Dislike successful');
+    } else {
+      // Handle the error
+      print('Error: ${data['message']}');
+    }
+  } catch (e) {
+    // Handle any exceptions that may occur during the function call
+    print('Error: $e');
+  }
+}
+
+
+
+  // Update the 'addCommentToPost' method
+Future<void> addAComment(String postId, String uid, String comment, String username) async {
+  try {
+    final HttpsCallable addCommentCallable = FirebaseFunctions.instance.httpsCallable('addAComment');
+
+    final result = await addCommentCallable.call({
+      'postId': postId,
+      'uid': uid,
+      'comment': comment,
+      'username': username,
+    });
+
+    final data = result.data;
+
+    if (data['result'] == 'success') {
+      // Comment addition was successful
+      print('Comment added successfully');
+    } else {
+      // Handle the error
+      print('Error: ${data['message']}');
+    }
+  } catch (e) {
+    // Handle any exceptions that may occur during the function call
+    print('Error: $e');
+  }
+}
+
 
 // Update the 'addReplyToComment' method
 Future<void> addReplyToComment(String postId, String commentId, String reply, String username) async {
