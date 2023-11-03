@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_project/providers/user_provider.dart';
 import 'package:my_project/resources/firestore_methods.dart';
@@ -90,18 +91,24 @@ class _CommentScreenState extends State<CommentScreen> {
               ),
             ),
             IconButton(
-              onPressed: () async {
-                if (userProvider.userdata != null) {
-                  final userId = userProvider.userdata!.uid;
-                  final username = userProvider.userdata!.username;
-                  await FirestoreMethods().addAComment(
-                      widget.postId, userId, _comController.text, username);
-                } else {
-                  print('User data is null');
-                }
-              },
-              icon: Icon(Icons.send),
-            )
+  onPressed: () async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userId = user.uid;
+      final username = user.displayName; // Assuming you have the user's display name
+      await FirestoreMethods().addAComment(
+        widget.postId,
+        userId,
+        _comController.text,
+        username!,
+      );
+    } else {
+      print('User is not authenticated. Please log in.');
+      // Handle the case where the user is not authenticated, e.g., navigate to a login screen.
+    }
+  },
+  icon: Icon(Icons.send),
+)
           ],
         ),
       ),
