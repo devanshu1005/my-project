@@ -95,7 +95,7 @@ class _CommentScreenState extends State<CommentScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final userId = user.uid;
-      final username = user.displayName; // Assuming you have the user's display name
+      final username = userProvider.userdata!.username; // Assuming you have the user's display name
       await FirestoreMethods().addAComment(
         widget.postId,
         userId,

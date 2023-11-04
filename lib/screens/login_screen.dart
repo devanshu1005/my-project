@@ -21,6 +21,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  Future <void> userDataFromFirebase(User currentUser) async{
+    DocumentSnapshot snap =
+          await _firestore.collection('users').doc(currentUser.uid).get();
+      UserData.fromSnap(snap);
+
+     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.userdata = UserData.fromSnap(snap);
+  }
+
   Future<void> loginUser() async {
     String res = await AuthMethods().loginUser(
       email: _emailController.text,
@@ -30,13 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (res == "success") {
       // Navigate to FeedScreen when login is successful
       User currentUser = _auth.currentUser!;
-
-      DocumentSnapshot snap =
-          await _firestore.collection('users').doc(currentUser.uid).get();
-      UserData.fromSnap(snap);
-
-     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.userdata = UserData.fromSnap(snap);
+     await userDataFromFirebase(currentUser);
+      
 
       Navigator.push(
         context,
